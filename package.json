@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "name": "keet-appling-next",
+  "version": "1.0.0",
+  "description": "Keet application shell",
+  "exports": {
+    "./package": "./package.json"
+  },
+  "files": [
+    "app.js",
+    "worker.js"
+  ],
+  "scripts": {
+    "test": "npm run lint",
+    "lint": "prettier . --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/keet-appling-next.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/keet-appling-next/issues"
+  },
+  "homepage": "https://github.com/holepunchto/keet-appling-next#readme",
+  "dependencies": {
+    "fx-native": "^1.1.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "prettier-config-holepunch": "^2.0.0"
+  }
+}
