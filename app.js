@@ -24,7 +24,7 @@ app
     webView.loadHTML(`
       <style>
         :root {
-          background-color: black
+          background-color: #18191f;
         }
 
         div {
