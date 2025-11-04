@@ -48,7 +48,7 @@ app
           font-size: 16px;
           overflow: hidden;
           -webkit-font-smoothing: antialiased;
-          font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
 
         body {
@@ -56,12 +56,6 @@ app
           background: var(--color-gradient-background);
           color: var(--color-white);
           font-family: 'Inter', sans-serif;
-        }
-
-        div {
-          height: 100vh;
-          display: flex;
-          align-items: center;
         }
 
         img {
@@ -96,9 +90,9 @@ app
           padding: 0 2.5rem;
           border-radius: 3.125rem;
           border: none;
-          letter-spacing: -2%;
-          margin-top: 18px;
-          margin-bottom: 50px;
+          letter-spacing: -0.02em;
+          margin-top: 1.125rem;
+          margin-bottom: 3.125rem;
           transition: background-color 0.2s ease;
         }
 
@@ -120,8 +114,8 @@ app
           align-items: center;
           flex-direction: column;
           justify-content: center;
-          padding: 0 80px;
-          height: 100%;
+          padding: 0 5rem;
+          height: 100vh;
         }
 
         header {
@@ -171,7 +165,6 @@ app
           <button>Install Keet</button>
         </article>
         <footer>
-          <span>Powered by Pear</span>
           <svg width="17" height="22" viewBox="0 0 17 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M7.61644 0H8.7882V2.1725H7.61644V0Z" fill="#B0D944"/>
             <path d="M7.03056 2.86V3.3H5.8588V3.85H10.5458V3.3H9.37408V2.4475H8.20232V2.86H7.03056Z" fill="#B0D944"/>
@@ -187,6 +180,7 @@ app
             <path d="M14.0611 19.2225H8.20232V19.635H2.34352V20.625H14.0611V19.2225Z" fill="#B0D944"/>
             <path d="M11.7176 20.9H8.20232V21.3125H4.68704V22H11.7176V20.9Z" fill="#B0D944"/>
           </svg>
+          <span>Powered by Pear</span>
         </footer>
       </main>
       <script>
