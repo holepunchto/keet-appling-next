@@ -5,7 +5,7 @@ const app = App.shared()
 
 let window
 
-const WINDOW_HEIGHT = 524
+const WINDOW_HEIGHT = 548
 const WINDOW_WIDTH = 500
 
 app
@@ -22,6 +22,11 @@ app
 
     webView.on('message', (message) => {
       console.log(message)
+
+      if (message.toString() === 'quit') {
+        window.close()
+        app.destroy()
+      }
     })
 
     webView.loadHTML(`
@@ -49,6 +54,7 @@ app
           overflow: hidden;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
+          background-color: red;
         }
 
         body {
@@ -81,40 +87,13 @@ app
           color: var(--color-grey-100)
         }
 
-        button {
-          background-color: var(--color-blue-400);
-          color: var(--color-grey-950);
-          font-size: 0.938rem;
-          font-weight: 600;
-          height: 2.75rem;
-          padding: 0 2.5rem;
-          border-radius: 3.125rem;
-          border: none;
-          letter-spacing: -0.02em;
-          margin-top: 1.125rem;
-          margin-bottom: 3.125rem;
-          transition: background-color 0.2s ease;
-        }
-
-        button:hover {
-          background-color: var(--color-blue-500);
-        }
-
-        button:active {
-          background-color: var(--color-blue-600);
-        }
-
-        button, button:focus {
-          outline: none;
-        }
-
         main {
           display: flex;
           gap: 0.5rem;
           align-items: center;
           flex-direction: column;
           justify-content: center;
-          padding: 0 5rem;
+          padding: 0 4rem;
           height: 100vh;
         }
 
@@ -131,6 +110,7 @@ app
           align-items: center;
           text-align: center;
           gap: 0.5rem;
+          width: 100%;
         }
 
         footer {
@@ -139,6 +119,116 @@ app
           display: flex;
           align-items: center;
           flex-direction: column;
+        }
+
+        button {
+          background-color: var(--color-blue-400);
+          color: var(--color-grey-950);
+          font-size: 0.938rem;
+          font-weight: 600;
+          height: 2.75rem;
+          padding: 0 2.5rem;
+          border-radius: 3.125rem;
+          border: none;
+          letter-spacing: -0.02em;
+          margin-top: 1.125rem;
+          margin-bottom: 3.125rem;
+          transition: background-color 0.2s ease;
+          white-space: nowrap;
+        }
+
+        button:hover {
+          background-color: var(--color-blue-500);
+        }
+
+        button:active {
+          background-color: var(--color-blue-600);
+        }
+
+        button, button:focus {
+          outline: none;
+        }
+
+        button.secondary {
+          color: var(--color-blue-400);
+          border: 1px solid var(--color-blue-400);
+          background-color: transparent;
+        }
+
+        button.secondary:hover {
+          color: var(--color-blue-400);
+          border-color: var(--color-blue-500);
+          background-color: transparent;
+        }
+
+        .hidden {
+          display: none !important;
+        }
+
+        .button-group {
+          display: flex;
+          gap: 1rem;
+          margin-top: 18px;
+          width: 100%;
+        }
+
+        .button-group button {
+          flex: 1;
+          min-width: 0;
+          margin: 0;
+        }
+
+        .message {
+          font-size: 0.813rem;
+          width: 100%;
+          text-align: left;
+        }
+
+        .message.error {
+          color: var(--color-red-400);
+        }
+
+        .status {
+          width: 100%;
+          height: 129px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        @keyframes indeterminate {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(400%);
+          }
+        }
+
+        .progress {
+          width: 100%;
+          height: 6px;
+          background-color: var(--color-grey-500);
+          border-radius: 4px;
+          overflow: hidden;
+        }
+
+        .progress > div {
+          height: 100%;
+          width: 25%;
+          border-radius: 4px;
+          background-color: var(--color-blue-400);
+          animation: indeterminate 1.5s ease-in-out infinite;
+        }
+
+        .progress.red > div {
+          background-color: var(--color-red-400);
+        }
+
+        .progress.green > div {
+          background-color: var(--color-green-400);
         }
       </style>
 
@@ -160,9 +250,20 @@ app
           </svg>
         </header>
         <article>
-          <h1>Welcome to Keet</h1>
-          <p>Ready to start the installation. This will only take a moment.</p>
-          <button>Install Keet</button>
+          <h1 id="title">Welcome to Keet</h1>
+          <p id="message">Ready to start the installation. This will only take a moment.</p>
+
+          <button id="installBtn">Install Keet</button>
+
+          <div id="status" class="status hidden">
+            <div id="progress" class="progress"><div></div></div>
+            <p id="warning" class="message hidden"></p>
+            <div id="buttonGroup" class="button-group hidden">
+              <button id="quitBtn" class="secondary">Quit</button>
+              <button id="retryBtn">Retry installation</button>
+            </div>
+          </div>
+
         </article>
         <footer>
           <svg width="17" height="22" viewBox="0 0 17 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -184,6 +285,85 @@ app
         </footer>
       </main>
       <script>
+        const elements = {
+          title: document.getElementById('title'),
+          message: document.getElementById('message'),
+          status: document.getElementById('status'),
+          progress: document.getElementById('progress'),
+          warning: document.getElementById('warning'),
+          buttonGroup: document.getElementById('buttonGroup'),
+          installBtn: document.getElementById('installBtn'),
+          quitBtn: document.getElementById('quitBtn'),
+          retryBtn: document.getElementById('retryBtn')
+        }
+
+        function setState(state) {
+          const { title, message, installBtn, status, progress, warning, buttonGroup } = elements
+
+          // Reset all states
+          installBtn.classList.add('hidden')
+          status.classList.remove('hidden')
+          progress.classList.remove('red', 'green')
+          warning.classList.add('hidden')
+          warning.classList.remove('error')
+          buttonGroup.classList.add('hidden')
+
+          switch(state) {
+            case 'installing':
+              title.textContent = 'Welcome to Keet'
+              message.textContent = 'It will launch once it is done.'
+              break
+
+            case 'slow':
+              title.textContent = 'Welcome to Keet'
+              message.textContent = 'It will launch once it is done.'
+              warning.textContent = "It's taking a bit of time, please check your connection."
+              warning.classList.remove('hidden')
+              break
+
+            case 'error':
+              title.textContent = 'Welcome to Keet'
+              message.textContent = 'It will launch once it is done.'
+              progress.classList.add('red')
+              warning.textContent = "Installation didn't complete."
+              warning.classList.remove('hidden')
+              warning.classList.add('error')
+              buttonGroup.classList.remove('hidden')
+              break
+
+            case 'complete':
+              title.textContent = 'Installation complete!'
+              message.textContent = 'Keet app will launch shortly.'
+              progress.classList.add('green')
+              break
+          }
+        }
+
+        installBtn.addEventListener('click', () => {
+          setState('installing')
+
+          // Demo: Simulate installation flow
+          // Uncomment the flow you want to test:
+
+          // Normal flow -> complete
+          // setTimeout(() => setState('complete'), 3000)
+
+          // Slow warning flow
+          // setTimeout(() => setState('slow'), 3000)
+
+          // Error flow
+          setTimeout(() => setState('error'), 3000)
+        })
+
+        retryBtn.addEventListener('click', () => {
+          setState('installing')
+          setTimeout(() => setState('complete'), 3000)
+        })
+
+        quitBtn.addEventListener('click', () => {
+          bridge.postMessage('quit')
+        })
+
         bridge.postMessage('web view ready')
       </script>
     `)
