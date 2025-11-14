@@ -1,4 +1,4 @@
-const { App } = require('fx-native')
+import { App } from 'fx-native'
 
 const app = App.shared()
 

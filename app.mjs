@@ -1,5 +1,6 @@
+import { App, Screen, Window, WebView } from 'fx-native'
+
 const { Thread } = Bare
-const { App, Screen, Window, WebView } = require('fx-native')
 
 const app = App.shared()
 
@@ -10,7 +11,7 @@ const WINDOW_WIDTH = 500
 
 app
   .on('launch', () => {
-    Thread.create(require.resolve('./worker'))
+    Thread.create(import.meta.resolve('./worker'))
 
     const screen = Screen.main()
 
