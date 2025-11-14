@@ -32,7 +32,6 @@ app
 
       if (message.toString() === 'quit') {
         window.close()
-        app.destroy()
       }
     })
 
