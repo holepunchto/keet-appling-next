@@ -16,7 +16,13 @@ app
 
     const { width, height } = screen.getBounds()
 
-    window = new Window((width - WINDOW_WIDTH) / 2, (height - WINDOW_HEIGHT) / 2, WINDOW_WIDTH, WINDOW_HEIGHT, { frame: false })
+    window = new Window(
+      (width - WINDOW_WIDTH) / 2,
+      (height - WINDOW_HEIGHT) / 2,
+      WINDOW_WIDTH,
+      WINDOW_HEIGHT,
+      { frame: false }
+    )
 
     const webView = new WebView(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
 
