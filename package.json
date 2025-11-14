@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/holepunchto/keet-appling-next#readme",
   "dependencies": {
+    "appling-native": "^1.1.0",
     "fx-native": "^1.1.0"
   },
   "devDependencies": {

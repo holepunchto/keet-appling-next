@@ -1,3 +1,7 @@
+import appling from 'appling-native'
+
+await using lock = await appling.lock()
+
 import { App, Screen, Window, WebView } from 'fx-native'
 
 const { Thread } = Bare
