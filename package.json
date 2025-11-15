@@ -9,7 +9,8 @@
   "files": [
     "app.mjs",
     "worker.mjs",
-    "preflight.mjs"
+    "preflight.mjs",
+    "view.html.mjs"
   ],
   "scripts": {
     "test": "npm run lint",
