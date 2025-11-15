@@ -1,24 +1,67 @@
 import appling from 'appling-native'
+import { App, Screen, Window, WebView } from 'fx-native'
+import { encode, decode } from './utils'
 
 await using lock = await appling.lock()
-
-import { App, Screen, Window, WebView } from 'fx-native'
 
 const { Thread } = Bare
 
 const app = App.shared()
 
-let window
-
+// Window
 const WINDOW_HEIGHT = 548
 const WINDOW_WIDTH = 500
+
+// Configuration
+const PLATFORM_DIR = lock.dir
+const SLOW_TIMEOUT = 180000 // 3 minutes
+const AUTO_LAUNCH = false
+const KEET_APP_KEY = '59hdmeurf5fj1hcgu7xen7uggn5omjcbkuhqeosk8o3ye81boq8y'
+const KEET_APP_LINK = `pear://${KEET_APP_KEY}`
+
+const config = {
+  dir: PLATFORM_DIR,
+  key: KEET_APP_KEY,
+  link: KEET_APP_LINK
+}
+
+let window
+let view
+
+function onViewMessage(message) {
+  const msg = message.toString()
+  switch (msg) {
+    case 'quit':
+      window.close()
+      break
+    case 'install':
+      app.broadcast(encode({ type: 'bootstrap' }))
+      break
+    case 'launch':
+      app.broadcast(encode({ type: 'launch' }))
+      break
+  }
+}
+
+function onWorkerMessage(message) {
+  const msg = decode(message)
+  switch (msg.type) {
+    case 'ready':
+      app.broadcast(encode({ type: 'config', data: config }))
+      break
+    case 'complete':
+      view.postMessage({ type: 'state', state: 'complete' })
+      break
+    case 'error':
+      view.postMessage({ type: 'state', state: 'error' })
+      break
+  }
+}
 
 app
   .on('launch', () => {
     Thread.create(import.meta.resolve('./worker'))
-
     const screen = Screen.main()
-
     const { width, height } = screen.getBounds()
 
     window = new Window(
@@ -29,17 +72,10 @@ app
       { frame: false }
     )
 
-    const webView = new WebView(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+    view = new WebView(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+    view.on('message', onViewMessage)
 
-    webView.on('message', (message) => {
-      console.log(message)
-
-      if (message.toString() === 'quit') {
-        window.close()
-      }
-    })
-
-    webView.loadHTML(`
+    view.loadHTML(`
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -178,7 +214,8 @@ app
         .button-group {
           display: flex;
           gap: 1rem;
-          margin-top: 18px;
+          margin-top: 1.125rem;
+          margin-bottom: 0;
           width: 100%;
         }
 
@@ -186,6 +223,7 @@ app
           flex: 1;
           min-width: 0;
           margin: 0;
+          padding: 0 1rem;
         }
 
         .message {
@@ -240,6 +278,12 @@ app
         .progress.green > div {
           background-color: var(--color-green-400);
         }
+
+        .progress.complete > div {
+          width: 100%;
+          animation: none;
+          background-color: var(--color-green-400);
+        }
       </style>
 
       <main>
@@ -272,6 +316,7 @@ app
               <button id="quitBtn" class="secondary">Quit</button>
               <button id="retryBtn">Retry installation</button>
             </div>
+            <button id="launchBtn" class="hidden" style="margin-top: 1.125rem; margin-bottom: 0;">Launch Keet</button>
           </div>
 
         </article>
@@ -304,33 +349,46 @@ app
           buttonGroup: document.getElementById('buttonGroup'),
           installBtn: document.getElementById('installBtn'),
           quitBtn: document.getElementById('quitBtn'),
-          retryBtn: document.getElementById('retryBtn')
+          retryBtn: document.getElementById('retryBtn'),
+          launchBtn: document.getElementById('launchBtn')
         }
 
+        bridge.addEventListener('message', (event) => {
+          const msg = event.data
+          if (msg && msg.type === 'state') {
+            if (msg.state === 'complete' || msg.state === 'error') {
+              if (slowWarningTimeout) {
+                clearTimeout(slowWarningTimeout)
+                slowWarningTimeout = null
+              }
+            }
+            setState(msg.state)
+          }
+        })
+
         function setState(state) {
-          const { title, message, installBtn, status, progress, warning, buttonGroup } = elements
+          const { title, message, installBtn, status, progress, warning, buttonGroup, launchBtn } = elements
 
           // Reset all states
           installBtn.classList.add('hidden')
           status.classList.remove('hidden')
-          progress.classList.remove('red', 'green')
+          progress.classList.remove('red', 'green', 'complete')
           warning.classList.add('hidden')
           warning.classList.remove('error')
           buttonGroup.classList.add('hidden')
+          launchBtn.classList.add('hidden')
 
           switch(state) {
             case 'installing':
               title.textContent = 'Welcome to Keet'
               message.textContent = 'It will launch once it is done.'
               break
-
             case 'slow':
               title.textContent = 'Welcome to Keet'
               message.textContent = 'It will launch once it is done.'
               warning.textContent = "It's taking a bit of time, please check your connection."
               warning.classList.remove('hidden')
               break
-
             case 'error':
               title.textContent = 'Welcome to Keet'
               message.textContent = 'It will launch once it is done.'
@@ -340,51 +398,61 @@ app
               warning.classList.add('error')
               buttonGroup.classList.remove('hidden')
               break
-
             case 'complete':
               title.textContent = 'Installation complete!'
-              message.textContent = 'Keet app will launch shortly.'
-              progress.classList.add('green')
+              progress.classList.add('complete')
+
+              if (AUTO_LAUNCH) {
+                message.textContent = 'Keet app will launch shortly'
+                // Auto-launch Keet
+                setTimeout(() => {
+                  bridge.postMessage('launch')
+                }, 500)
+              } else {
+                message.textContent = 'Keet is ready to launch.'
+                launchBtn.classList.remove('hidden')
+              }
               break
           }
         }
 
+        const SLOW_WARNING_TIMEOUT = ${SLOW_TIMEOUT}
+        const AUTO_LAUNCH = ${AUTO_LAUNCH}
+        let slowWarningTimeout = null
+
         installBtn.addEventListener('click', () => {
           setState('installing')
+          bridge.postMessage('install')
 
-          // Demo: Simulate installation flow
-          // Uncomment the flow you want to test:
-
-          // Normal flow -> complete
-          // setTimeout(() => setState('complete'), 3000)
-
-          // Slow warning flow
-          // setTimeout(() => setState('slow'), 3000)
-
-          // Error flow
-          setTimeout(() => setState('error'), 3000)
+          slowWarningTimeout = setTimeout(() => {
+            setState('slow')
+          }, SLOW_WARNING_TIMEOUT)
         })
 
         retryBtn.addEventListener('click', () => {
           setState('installing')
-          setTimeout(() => setState('complete'), 3000)
+          bridge.postMessage('install')
+
+          slowWarningTimeout = setTimeout(() => {
+            setState('slow')
+          }, SLOW_WARNING_TIMEOUT)
         })
 
         quitBtn.addEventListener('click', () => {
           bridge.postMessage('quit')
         })
 
-        bridge.postMessage('web view ready')
+        launchBtn.addEventListener('click', () => {
+          bridge.postMessage('launch')
+        })
       </script>
     `)
 
-    window.appendChild(webView)
+    window.appendChild(view)
     window.show()
   })
   .on('terminate', () => {
     window.destroy()
   })
-  .on('message', (message) => {
-    console.log(message.toString())
-  })
+  .on('message', onWorkerMessage)
   .run()
