@@ -7,8 +7,12 @@
     "./package": "./package.json"
   },
   "files": [
-    "app.js",
-    "worker.js"
+    "app.mjs",
+    "worker.mjs",
+    "preflight.mjs",
+    "view.html.mjs",
+    "pear.svg",
+    "splash.svg"
   ],
   "scripts": {
     "test": "npm run lint",
@@ -25,8 +29,9 @@
   },
   "homepage": "https://github.com/holepunchto/keet-appling-next#readme",
   "dependencies": {
-    "appling-native": "^1.1.0",
-    "fx-native": "^1.1.0"
+    "appling-native": "^1.2.1",
+    "fx-native": "^1.1.0",
+    "pear-updater-bootstrap": "^2.3.0"
   },
   "devDependencies": {
     "prettier": "^3.4.2",
