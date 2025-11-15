@@ -22,6 +22,7 @@ const app = App.shared()
 const config = {
   dir: PLATFORM_DIR,
   key: PLATFORM_KEY,
+  app: APP_ID,
   link: `pear://${APP_ID}`
 }
 

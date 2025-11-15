@@ -20,21 +20,19 @@ async function runBootstrap() {
       await bootstrap(config.key, config.dir, { lock: false })
       platform = await appling.resolve(config.dir)
     }
-    const link = appling.parse(config.link)
-    await platform.preflight(link)
+    await platform.preflight(config.link)
     app.broadcast(encode({ type: 'complete' }))
   } catch (e) {
-    console.error('ERROR', e.message)
+    console.error('Bootstrap error: %o', e)
     app.broadcast(encode({ type: 'error', error: e.message }))
   }
 }
 
 function launchApp() {
   try {
-    const keetApp = new appling.App(config.link)
-    platform.launch(keetApp, config.link, 'Keet')
+    platform.launch(config.app)
   } catch (e) {
-    console.error('Launch error:', e.message)
+    console.error('Launch error: %o', e)
     app.broadcast(encode({ type: 'error', error: e.message }))
   }
 }
@@ -51,7 +49,7 @@ app.on('message', async (message) => {
       await runBootstrap()
       break
     case 'launch':
-      await launchApp()
+      launchApp()
       break
   }
 })
