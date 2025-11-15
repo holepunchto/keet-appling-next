@@ -16,12 +16,12 @@ const WINDOW_WIDTH = 500
 const PLATFORM_DIR = lock.dir
 const SLOW_TIMEOUT = 180000 // 3 minutes
 const AUTO_LAUNCH = false
-const KEET_APP_KEY = 'oeeoz3w6fjjt7bym3ndpa6hhicm8f8naxyk11z4iypeoupn6jzpo'
-const KEET_APP_LINK = `pear://${KEET_APP_KEY}`
+const PEAR_PLATFORM_KEY = 'pzcjqmpoo6szkoc4bpkw65ib9ctnrq7b6mneeinbhbheihaq6p6o'
+const KEET_APP_LINK = 'pear://keet'
 
 const config = {
   dir: PLATFORM_DIR,
-  key: KEET_APP_KEY,
+  key: PEAR_PLATFORM_KEY,
   link: KEET_APP_LINK
 }
 

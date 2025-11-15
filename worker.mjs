@@ -17,7 +17,7 @@ async function runBootstrap() {
     try {
       platform = await appling.resolve(config.dir)
     } catch (e) {
-      await bootstrap(config.key, config.dir)
+      await bootstrap(config.key, config.dir, { lock: false })
       platform = await appling.resolve(config.dir)
     }
     const link = appling.parse(config.link)
