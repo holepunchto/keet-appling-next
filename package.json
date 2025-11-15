@@ -8,7 +8,8 @@
   },
   "files": [
     "app.mjs",
-    "worker.mjs"
+    "worker.mjs",
+    "preflight.mjs"
   ],
   "scripts": {
     "test": "npm run lint",
@@ -25,7 +26,7 @@
   },
   "homepage": "https://github.com/holepunchto/keet-appling-next#readme",
   "dependencies": {
-    "appling-native": "^1.2.0",
+    "appling-native": "^1.2.1",
     "fx-native": "^1.1.0",
     "pear-updater-bootstrap": "^2.3.0"
   },

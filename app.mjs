@@ -1,28 +1,28 @@
-import appling from 'appling-native'
 import { App, Screen, Window, WebView } from 'fx-native'
 import { encode, decode } from './utils'
-
-await using lock = await appling.lock()
+import { preflight } from './preflight'
 
 const { Thread } = Bare
 
-const app = App.shared()
-
-// Window
 const WINDOW_HEIGHT = 548
 const WINDOW_WIDTH = 500
 
-// Configuration
-const PLATFORM_DIR = lock.dir
 const SLOW_TIMEOUT = 180000 // 3 minutes
 const AUTO_LAUNCH = false
-const PEAR_PLATFORM_KEY = 'pzcjqmpoo6szkoc4bpkw65ib9ctnrq7b6mneeinbhbheihaq6p6o'
-const KEET_APP_LINK = 'pear://keet'
+
+const APP_ID = 'keet'
+
+await using lock = await preflight(APP_ID)
+
+const PLATFORM_KEY = 'pzcjqmpoo6szkoc4bpkw65ib9ctnrq7b6mneeinbhbheihaq6p6o'
+const PLATFORM_DIR = lock.dir
+
+const app = App.shared()
 
 const config = {
   dir: PLATFORM_DIR,
-  key: PEAR_PLATFORM_KEY,
-  link: KEET_APP_LINK
+  key: PLATFORM_KEY,
+  link: `pear://${APP_ID}`
 }
 
 let window
