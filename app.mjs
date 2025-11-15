@@ -16,7 +16,7 @@ const WINDOW_WIDTH = 500
 const PLATFORM_DIR = lock.dir
 const SLOW_TIMEOUT = 180000 // 3 minutes
 const AUTO_LAUNCH = false
-const KEET_APP_KEY = '59hdmeurf5fj1hcgu7xen7uggn5omjcbkuhqeosk8o3ye81boq8y'
+const KEET_APP_KEY = 'oeeoz3w6fjjt7bym3ndpa6hhicm8f8naxyk11z4iypeoupn6jzpo'
 const KEET_APP_LINK = `pear://${KEET_APP_KEY}`
 
 const config = {
@@ -401,13 +401,10 @@ app
             case 'complete':
               title.textContent = 'Installation complete!'
               progress.classList.add('complete')
-
               if (AUTO_LAUNCH) {
                 message.textContent = 'Keet app will launch shortly'
                 // Auto-launch Keet
-                setTimeout(() => {
-                  bridge.postMessage('launch')
-                }, 500)
+                setTimeout(() => bridge.postMessage('launch'), 500)
               } else {
                 message.textContent = 'Keet is ready to launch.'
                 launchBtn.classList.remove('hidden')
