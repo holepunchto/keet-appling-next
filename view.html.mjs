@@ -1,10 +1,10 @@
 import splash from './splash.svg' with { type: 'text' }
 import pear from './pear.svg' with { type: 'text' }
 
-const html = String.raw
-
+const AUTO_LAUNCH = true
 const SLOW_TIMEOUT = 180000 // 3 minutes
-const AUTO_LAUNCH = false
+
+const html = String.raw
 
 export default html`
   <style>
@@ -248,6 +248,9 @@ export default html`
     </footer>
   </main>
   <script>
+    const SLOW_TIMEOUT = ${SLOW_TIMEOUT}
+    const AUTO_LAUNCH = ${AUTO_LAUNCH}
+
     const elements = {
       title: document.getElementById('title'),
       message: document.getElementById('message'),
@@ -261,31 +264,36 @@ export default html`
       launchBtn: document.getElementById('launchBtn')
     }
 
-    bridge.addEventListener('message', (event) => {
-      const msg = event.data
-      if (msg && msg.type === 'state') {
-        if (msg.state === 'complete' || msg.state === 'error') {
-          if (slowWarningTimeout) {
-            clearTimeout(slowWarningTimeout)
-            slowWarningTimeout = null
-          }
-        }
-        setState(msg.state)
-      }
-    })
+    let timer = null
+
+    function startTimer() {
+      timer = setTimeout(() => setState('slow'), SLOW_TIMEOUT)
+    }
+
+    function onMessage(element, fn) {
+      element.addEventListener('message', fn)
+    }
+
+    function onClick(element, fn) {
+      element.addEventListener('click', fn)
+    }
+
+    function resetElements(e) {
+      e.installBtn.classList.add('hidden')
+      e.status.classList.remove('hidden')
+      e.progress.classList.remove('red', 'green', 'complete')
+      e.warning.classList.add('hidden')
+      e.warning.classList.remove('error')
+      e.buttonGroup.classList.add('hidden')
+      e.launchBtn.classList.add('hidden')
+    }
 
     function setState(state) {
-      const { title, message, installBtn, status, progress, warning, buttonGroup, launchBtn } =
-        elements
+      const { title, message, installBtn, progress, warning, buttonGroup, launchBtn } = elements
 
-      // Reset all states
-      installBtn.classList.add('hidden')
-      status.classList.remove('hidden')
-      progress.classList.remove('red', 'green', 'complete')
-      warning.classList.add('hidden')
-      warning.classList.remove('error')
-      buttonGroup.classList.add('hidden')
-      launchBtn.classList.add('hidden')
+      resetElements(elements)
+      clearTimeout(timer)
+      timer = null
 
       switch (state) {
         case 'installing':
@@ -312,7 +320,6 @@ export default html`
           progress.classList.add('complete')
           if (AUTO_LAUNCH) {
             message.textContent = 'Keet app will launch shortly'
-            // Auto-launch Keet
             setTimeout(() => bridge.postMessage('launch'), 500)
           } else {
             message.textContent = 'Keet is ready to launch.'
@@ -322,33 +329,30 @@ export default html`
       }
     }
 
-    const SLOW_WARNING_TIMEOUT = ${SLOW_TIMEOUT}
-    const AUTO_LAUNCH = ${AUTO_LAUNCH}
-    let slowWarningTimeout = null
-
-    installBtn.addEventListener('click', () => {
-      setState('installing')
-      bridge.postMessage('install')
-
-      slowWarningTimeout = setTimeout(() => {
-        setState('slow')
-      }, SLOW_WARNING_TIMEOUT)
+    onMessage(bridge, (event) => {
+      const msg = event.data
+      if (msg && msg.type === 'state') {
+        setState(msg.state)
+      }
     })
 
-    retryBtn.addEventListener('click', () => {
+    onClick(installBtn, () => {
       setState('installing')
       bridge.postMessage('install')
-
-      slowWarningTimeout = setTimeout(() => {
-        setState('slow')
-      }, SLOW_WARNING_TIMEOUT)
+      startTimer()
     })
 
-    quitBtn.addEventListener('click', () => {
+    onClick(retryBtn, () => {
+      setState('installing')
+      bridge.postMessage('install')
+      startTimer()
+    })
+
+    onClick(quitBtn, () => {
       bridge.postMessage('quit')
     })
 
-    launchBtn.addEventListener('click', () => {
+    onClick(launchBtn, () => {
       bridge.postMessage('launch')
     })
   </script>
