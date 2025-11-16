@@ -8,7 +8,7 @@ const app = App.shared()
 let config
 let platform
 
-async function setup(data) {
+function setup(data) {
   config = data
 }
 
