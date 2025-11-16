@@ -34,7 +34,7 @@ function onViewMessage(message) {
       window.close()
       break
     case 'install':
-      app.broadcast(encode({ type: 'bootstrap' }))
+      app.broadcast(encode({ type: 'install' }))
       break
     case 'launch':
       app.broadcast(encode({ type: 'launch' }))

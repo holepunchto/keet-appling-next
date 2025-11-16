@@ -8,11 +8,11 @@ const app = App.shared()
 let config
 let platform
 
-function setConfig(data) {
+async function setup(data) {
   config = data
 }
 
-async function runBootstrap() {
+async function install() {
   try {
     try {
       platform = await appling.resolve(config.dir)
@@ -28,7 +28,7 @@ async function runBootstrap() {
   }
 }
 
-function launchApp() {
+function launch() {
   try {
     platform.launch(config.app)
   } catch (e) {
@@ -41,13 +41,13 @@ app.on('message', async (message) => {
   const msg = decode(message)
   switch (msg.type) {
     case 'config':
-      setConfig(msg.data)
+      setup(msg.data)
       break
-    case 'bootstrap':
-      await runBootstrap()
+    case 'install':
+      await install()
       break
     case 'launch':
-      launchApp()
+      launch()
       break
   }
 })
