@@ -39,8 +39,6 @@ function launchApp() {
 
 app.on('message', async (message) => {
   const msg = decode(message)
-  console.log('Worker received:', msg)
-
   switch (msg.type) {
     case 'config':
       setConfig(msg.data)
