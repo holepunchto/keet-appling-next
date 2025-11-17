@@ -1,5 +1,8 @@
 import splash from './splash.svg' with { type: 'text' }
 import pear from './pear.svg' with { type: 'text' }
+import interRegular from './fonts/Inter-Regular.woff2' with { type: 'binary' }
+import interMedium from './fonts/Inter-Medium.woff2' with { type: 'binary' }
+import interSemiBold from './fonts/Inter-SemiBold.woff2' with { type: 'binary' }
 
 const AUTO_LAUNCH = true
 const SLOW_TIMEOUT = 180000 // 3 minutes
@@ -13,21 +16,21 @@ export default html`
       font-style: normal;
       font-weight: 400;
       font-display: swap;
-      src: url('fonts/Inter-Regular.woff2') format('woff2');
+      src: url('data:font/woff2;base64,${interRegular.toString('base64')}') format('woff2');
     }
     @font-face {
       font-family: 'Inter';
       font-style: normal;
       font-weight: 500;
       font-display: swap;
-      src: url('fonts/Inter-Medium.woff2') format('woff2');
+      src: url('data:font/woff2;base64,${interMedium.toString('base64')}') format('woff2');
     }
     @font-face {
       font-family: 'Inter';
       font-style: normal;
       font-weight: 600;
       font-display: swap;
-      src: url('fonts/Inter-SemiBold.woff2') format('woff2');
+      src: url('data:font/woff2;base64,${interSemiBold.toString('base64')}') format('woff2');
     }
 
     :root {
