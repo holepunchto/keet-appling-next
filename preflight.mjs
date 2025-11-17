@@ -2,6 +2,7 @@ import appling from 'appling-native'
 
 export async function preflight(id) {
   const lock = await appling.lock()
+  return lock
 
   let platform
   try {
