@@ -1,9 +1,8 @@
+import Thread from 'bare-thread'
 import { App, Screen, Window, WebView } from 'fx-native'
 import { encode, decode } from './utils'
 import { preflight } from './preflight'
 import html from './view.html'
-
-const { Thread } = Bare
 
 const WINDOW_HEIGHT = 548
 const WINDOW_WIDTH = 500
@@ -59,7 +58,7 @@ function onWorkerMessage(message) {
 
 app
   .on('launch', () => {
-    Thread.create(import.meta.resolve('./worker'))
+    new Thread(import.meta.resolve('./worker'))
 
     const { width, height } = Screen.main().getBounds()
 

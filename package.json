@@ -30,6 +30,7 @@
   "homepage": "https://github.com/holepunchto/keet-appling-next#readme",
   "dependencies": {
     "appling-native": "^1.2.1",
+    "bare-thread": "^1.1.3",
     "fx-native": "^1.1.0",
     "pear-updater-bootstrap": "^2.3.0"
   },
