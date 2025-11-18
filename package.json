@@ -8,11 +8,7 @@
   },
   "files": [
     "app.mjs",
-    "worker.mjs",
-    "preflight.mjs",
-    "view.html.mjs",
-    "pear.svg",
-    "splash.svg"
+    "lib"
   ],
   "scripts": {
     "test": "npm run lint",
