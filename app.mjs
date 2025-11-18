@@ -1,5 +1,6 @@
 import Thread from 'bare-thread'
 import { App, Screen, Window, WebView } from 'fx-native'
+import appling from 'appling-native'
 import { encode, decode } from './utils'
 import { preflight } from './preflight'
 import html from './view.html'
@@ -9,7 +10,7 @@ const WINDOW_WIDTH = 500
 
 const APP_ID = 'keet'
 
-await using lock = await preflight(APP_ID)
+using lock = await preflight(APP_ID)
 
 const PLATFORM_KEY = 'pzcjqmpoo6szkoc4bpkw65ib9ctnrq7b6mneeinbhbheihaq6p6o'
 const PLATFORM_DIR = lock.dir
@@ -35,9 +36,13 @@ function onViewMessage(message) {
     case 'install':
       app.broadcast(encode({ type: 'install' }))
       break
-    case 'launch':
-      app.broadcast(encode({ type: 'launch' }))
+    case 'launch': {
+      lock.unlock()
+      const app = new appling.App(APP_ID)
+      app.open()
+      window.close()
       break
+    }
   }
 }
 

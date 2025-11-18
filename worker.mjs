@@ -28,15 +28,6 @@ async function install() {
   }
 }
 
-function launch() {
-  try {
-    platform.launch(config.app)
-  } catch (e) {
-    console.error('Launch error: %o', e)
-    app.broadcast(encode({ type: 'error', error: e.message }))
-  }
-}
-
 app.on('message', async (message) => {
   const msg = decode(message)
   switch (msg.type) {
@@ -45,9 +36,6 @@ app.on('message', async (message) => {
       break
     case 'install':
       await install()
-      break
-    case 'launch':
-      launch()
       break
   }
 })
