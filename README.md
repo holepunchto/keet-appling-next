@@ -8,7 +8,7 @@ See bare-build for more detailed instructions for universal mac builds, signing 
 For quick demos do
 
 ```sh
-bare-build --target=darwin-arm64 --icon macos.icns app.mjs
+bare-build --target=darwin-arm64 --icon lib/icons/macos.icns app.mjs
 ```
 
 ## License
