@@ -6,9 +6,18 @@ description: |
   Discover https://keet.io, the ultimate decentralized, peer-to-peer communication platform. Enjoy
   secure, private, and efficient messaging and file sharing without intermediaries. Experience true
   digital privacy and freedom with https://keet.io
+license: Apache-2.0
+website:
+  - https://keet.io
+contact:
+  - https://support.keet.io
+issues:
+  - https://support.keet.io
+source-code:
+  - https://github.com/holepunchto
 base: core22
-grade: devel
-confinement: devmode
+grade: stable
+confinement: strict
 platforms:
   amd64:
   arm64:
@@ -39,6 +48,8 @@ apps:
       - home
       - network
       - network-status
+      - network-bind
+      - browser-support
       - audio-playback
       - audio-record
       - camera
