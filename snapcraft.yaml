@@ -15,7 +15,7 @@ platforms:
 plugs:
   webkitgtk-6-gnome-2204:
     interface: content
-    target: webkitgtk-platform
+    target: $SNAP/webkitgtk-platform
     default-provider: webkitgtk-6-gnome-2204
 parts:
   keet:
