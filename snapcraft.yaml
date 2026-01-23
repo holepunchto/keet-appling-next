@@ -15,17 +15,17 @@ issues:
   - https://support.keet.io
 source-code:
   - https://github.com/holepunchto
-base: core22
+base: core24
 grade: stable
 confinement: strict
 platforms:
   amd64:
   arm64:
 plugs:
-  webkitgtk-6-gnome-2204:
+  webkitgtk:
     interface: content
     target: $SNAP/webkitgtk-platform
-    default-provider: webkitgtk-6-gnome-2204
+    default-provider: webkitgtk-6-gnome-2404
 parts:
   keet:
     plugin: dump
@@ -53,7 +53,7 @@ apps:
       - audio-playback
       - audio-record
       - camera
-      - webkitgtk-6-gnome-2204
+      - webkitgtk
     environment:
       LD_LIBRARY_PATH: $SNAP/webkitgtk-platform/usr/lib:$SNAP/webkitgtk-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH
       PATH: $SNAP/webkitgtk-platform/usr/bin:$PATH
