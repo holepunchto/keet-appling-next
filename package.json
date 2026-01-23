@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "Keet",
-  "version": "1.0.0",
+  "version": "4.0.0",
   "description": "Chat directly with your friends. Send messages, files, high quality videos and photos with no limitations. Private and Encrypted. Always Peer-to-Peer. Never on a server.",
   "exports": {
     "./package": "./package.json"
