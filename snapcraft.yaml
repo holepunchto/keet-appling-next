@@ -26,6 +26,9 @@ plugs:
     interface: content
     target: $SNAP/webkitgtk-platform
     default-provider: webkitgtk-6-gnome-2204
+  shmem:
+    interface: shared-memory
+    private: true
 parts:
   keet:
     plugin: dump
@@ -54,11 +57,12 @@ apps:
       - audio-record
       - camera
       - webkitgtk-6-gnome-2204
+      - shmem
     environment:
       LD_LIBRARY_PATH: $SNAP/webkitgtk-platform/usr/lib:$SNAP/webkitgtk-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH
       PATH: $SNAP/webkitgtk-platform/usr/bin:$PATH
 lint:
   ignore:
     - library:
-      - usr/lib/*.so*
-      - usr/lib/**/*.so*
+        - usr/lib/*.so*
+        - usr/lib/**/*.so*
