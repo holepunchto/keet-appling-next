@@ -6,10 +6,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             platform: linux
             arch: x64
-          - os: ubuntu-22.04-arm
+          - os: ubuntu-24.04-arm
             platform: linux
             arch: arm64
     runs-on: ${{ matrix.os }}
@@ -19,14 +19,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - run: sudo apt-get snapcraft
-      - run: sudo snap install lxd
-      - run: sudo lxd init
+      - run: sudo snap install snapcraft --classic
       - run: npm install -g bare-build
       - run: npm install
       - run: bare-build --host ${{ matrix.platform }}-${{ matrix.arch }} --name Keet --icon lib/icons/linux.png app.cjs --out out
       - run: mkdir -p prebuilds
-      - run: snapcraft pack -o prebuilds/keet-${{ matrix.platform }}-${{ matrix.arch }}.snap
+      - run: sudo snapcraft pack --destructive-mode -o prebuilds/keet-${{ matrix.platform }}-${{ matrix.arch }}.snap
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}
