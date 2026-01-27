@@ -29,8 +29,8 @@
     "bare-env": "^3.0.0",
     "bare-path": "^3.0.0",
     "bare-thread": "^1.1.6",
-    "fx-native": "^1.1.3",
-    "pear-updater-bootstrap": "^2.4.0",
+    "fx-native": "^1.1.4",
+    "pear-updater-bootstrap": "^2.5.0",
     "prettier-bytes": "^1.0.4"
   },
   "devDependencies": {
