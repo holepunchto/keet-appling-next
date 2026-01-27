@@ -1,0 +1,45 @@
+name: Prebuild
+on:
+  workflow_dispatch:
+jobs:
+  prebuild:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            platform: linux
+            arch: x64
+          - os: ubuntu-22.04-arm
+            platform: linux
+            arch: arm64
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - run: sudo apt-get snapcraft
+      - run: sudo snap install lxd
+      - run: sudo lxd init
+      - run: npm install -g bare-build
+      - run: npm install
+      - run: bare-build --host ${{ matrix.platform }}-${{ matrix.arch }} --name Keet --icon lib/icons/linux.png app.cjs --out out
+      - run: mkdir -p prebuilds
+      - run: snapcraft pack -o prebuilds/keet-${{ matrix.platform }}-${{ matrix.arch }}.snap
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}
+          path: prebuilds/*
+  merge:
+    needs: prebuild
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: prebuilds
+          merge-multiple: true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prebuilds
+          path: prebuilds
