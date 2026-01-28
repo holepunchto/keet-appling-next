@@ -1,0 +1,64 @@
+name: keet
+version: 4.0.0
+title: Keet - Private and secure P2P chat
+summary: Experience secure, private messaging and file sharing without intermediaries
+description: |
+  Discover https://keet.io, the ultimate decentralized, peer-to-peer communication platform. Enjoy
+  secure, private, and efficient messaging and file sharing without intermediaries. Experience true
+  digital privacy and freedom with https://keet.io
+license: Apache-2.0
+website:
+  - https://keet.io
+contact:
+  - https://support.keet.io
+issues:
+  - https://support.keet.io
+source-code:
+  - https://github.com/holepunchto
+base: core24
+grade: stable
+confinement: strict
+platforms:
+  amd64:
+  arm64:
+plugs:
+  webkitgtk-6-gnome-2404:
+    interface: content
+    target: $SNAP/webkitgtk-platform
+    default-provider: webkitgtk-6-gnome-2404
+parts:
+  keet:
+    plugin: dump
+    source-type: local
+    source: out/Keet.AppDir
+    stage:
+      - usr/
+    stage-packages:
+      - libatomic1
+layout:
+  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/webkitgtk-6.0:
+    bind: $SNAP/webkitgtk-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/webkitgtk-6.0
+apps:
+  keet:
+    command: usr/bin/keet
+    extensions:
+      - gnome
+    desktop: usr/share/applications/Keet.desktop
+    plugs:
+      - home
+      - network
+      - network-status
+      - network-bind
+      - browser-support
+      - audio-playback
+      - audio-record
+      - camera
+      - webkitgtk-6-gnome-2404
+    environment:
+      LD_LIBRARY_PATH: $SNAP/webkitgtk-platform/usr/lib:$SNAP/webkitgtk-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH
+      PATH: $SNAP/webkitgtk-platform/usr/bin:$PATH
+lint:
+  ignore:
+    - library:
+      - usr/lib/*.so*
+      - usr/lib/**/*.so*
