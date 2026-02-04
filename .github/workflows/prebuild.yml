@@ -23,9 +23,9 @@ jobs:
       - run: npm install -g bare-build
       - run: npm install
       - run: bare-build --host ${{ matrix.platform }}-${{ matrix.arch }} --name Keet --icon lib/icons/linux.png app.cjs --out out
-      - run: mkdir -p prebuilds
+      - run: mkdir -p prebuilds/${{ matrix.platform }}-${{ matrix.arch }}
       - run: sudo snapcraft pack --destructive-mode -o prebuilds/keet-${{ matrix.platform }}-${{ matrix.arch }}.snap
-      - run: bare-build --host ${{ matrix.platform }}-${{ matrix.arch }} --name Keet --icon lib/icons/linux.png app.cjs --out prebuilds --package
+      - run: bare-build --host ${{ matrix.platform }}-${{ matrix.arch }} --name Keet --icon lib/icons/linux.png app.cjs --out prebuilds/${{ matrix.platform }}-${{ matrix.arch }} --package
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-${{ matrix.arch }}${{ matrix.tags }}
