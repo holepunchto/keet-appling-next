@@ -30,6 +30,8 @@
     "bare-path": "^3.0.0",
     "bare-thread": "^1.1.6",
     "fx-native": "^1.1.4",
+    "hypercore-id-encoding": "^1.3.0",
+    "pear-aliases": "^1.0.7",
     "pear-updater-bootstrap": "^2.5.0",
     "tiny-byte-size": "^1.1.0"
   },
